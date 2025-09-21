@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/includes/functions.php';
 
-// Redirect if already logged in
+// Redirect if already logged in (uses isLoggedIn() from includes/functions.php)
 if (isLoggedIn()) {
     redirect('/');
 }
@@ -30,6 +30,8 @@ if ($_POST) {
 $pageTitle = 'Login - Loan Management System';
 include 'includes/header.php';
 ?>
+
+<link rel="stylesheet" href="/assets/css/style.css">
 
 <div class="min-h-screen landing-gradient">
     <!-- Header -->
@@ -222,3 +224,17 @@ include 'includes/header.php';
     }
 }
 </style>
+
+import './index.css';
+import './assets/css/style.css';
+
+<?php
+function getBuiltCssPath() {
+    $distDir = __DIR__ . '/../../dist/assets';
+    if (!is_dir($distDir)) return null;
+    foreach (glob($distDir . '/index-*.css') as $file) {
+        $basename = basename($file);
+        return '/bbloan/dist/assets/' . $basename; // adjust base if needed
+    }
+    return null;
+}

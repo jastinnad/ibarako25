@@ -1,5 +1,12 @@
 <?php
+
 // Authentication and user management functions
+
+if (!function_exists('isLoggedIn')) {
+    function isLoggedIn() {
+        return isset($_SESSION['current_user']);
+    }
+}
 
 function getCurrentUser() {
     return isset($_SESSION['current_user']) ? $_SESSION['current_user'] : null;
@@ -172,4 +179,100 @@ function formatDate($dateString) {
 function formatCurrency($amount) {
     return '$' . number_format($amount);
 }
+
+// ---------- Utility & Helper Functions (Flash Messages, Redirects, Data Access) ----------
+
+if (!function_exists('ensureSession')) {
+    function ensureSession() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+}
+
+if (!function_exists('ensureAppData')) {
+    function ensureAppData() {
+        ensureSession();
+        if (!isset($_SESSION['app_data'])) {
+            $_SESSION['app_data'] = [
+                'users' => [],
+                'notifications' => [],
+                'loans' => []
+            ];
+        } else {
+            // Ensure keys exist
+            foreach (['users','notifications','loans'] as $k) {
+                if (!isset($_SESSION['app_data'][$k]) || !is_array($_SESSION['app_data'][$k])) {
+                    $_SESSION['app_data'][$k] = [];
+                }
+            }
+        }
+    }
+}
+
+if (!function_exists('setAlert')) {
+    function setAlert($message, $type = 'info') {
+        ensureSession();
+        $_SESSION['flash_alert'] = [
+            'message' => $message,
+            'type' => $type
+        ];
+    }
+}
+
+if (!function_exists('getAlert')) {
+    function getAlert() {
+        ensureSession();
+        if (isset($_SESSION['flash_alert'])) {
+            $a = $_SESSION['flash_alert'];
+            unset($_SESSION['flash_alert']);
+            return $a;
+        }
+        return null;
+    }
+}
+
+if (!function_exists('redirect')) {
+    function redirect($path) {
+        // If path is absolute URL use directly, else build relative to app root
+        if (!preg_match('/^https?:/i', $path)) {
+            // Normalize leading slash
+            if ($path === '' || $path[0] !== '/') {
+                $path = '/' . ltrim($path, '/');
+            }
+        }
+        header('Location: ' . $path);
+        exit;
+    }
+}
+
+if (!function_exists('getUserByEmail')) {
+    function getUserByEmail($email) {
+        ensureAppData();
+        foreach ($_SESSION['app_data']['users'] as $u) {
+            if (isset($u['email']) && strtolower($u['email']) === strtolower($email)) {
+                return $u;
+            }
+        }
+        return null;
+    }
+}
+
+if (!function_exists('getBuiltCssPath')) {
+    function getBuiltCssPath() {
+        // Adjust relative to this file (src/includes/functions.php) up two levels to project root
+        $assetsDir = __DIR__ . '/../../dist/assets';
+        if (!is_dir($assetsDir)) return null;
+        $matches = glob($assetsDir . '/index-*.css');
+        if ($matches && isset($matches[0])) {
+            $file = basename($matches[0]);
+            // Base path aligns with app served at /bbloan/
+            return '/bbloan/dist/assets/' . $file;
+        }
+        return null;
+    }
+}
+
+// Initialize app data at load
+ensureAppData();
 ?>
