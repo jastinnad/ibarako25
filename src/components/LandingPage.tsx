@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Users, Shield, CreditCard, PiggyBank } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Users, Shield, CreditCard, PiggyBank } from "lucide-react";
+import { toast } from "sonner";
 
 interface LandingPageProps {
-  onLogin: (email: string, password: string, role: 'member' | 'admin') => boolean;
+  onLogin: (
+    email: string,
+    password: string,
+    role: "member" | "admin"
+  ) => boolean;
   onSignup: (userData: {
     name: string;
     email: string;
@@ -20,55 +30,59 @@ interface LandingPageProps {
 
 export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
   const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
-    role: 'member' as 'member' | 'admin'
+    email: "",
+    password: "",
+    role: "member" as "member" | "admin",
   });
 
   const [signupData, setSignupData] = useState({
-    name: '',
-    email: '',
-    mobile: '',
-    address: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    mobile: "",
+    address: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const success = onLogin(loginData.email, loginData.password, loginData.role);
+    const success = onLogin(
+      loginData.email,
+      loginData.password,
+      loginData.role
+    );
     if (success) {
-      toast.success('Login successful!');
+      toast.success("Login successful!");
     } else {
-      toast.error('Invalid credentials. Please try again.');
+      toast.error("Invalid credentials. Please try again.");
     }
   };
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     if (signupData.password !== signupData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error("Passwords do not match");
       return;
     }
-    
+
     const result = onSignup({
       name: signupData.name,
       email: signupData.email,
       mobile: signupData.mobile,
       address: signupData.address,
-      password: signupData.password
+      password: signupData.password,
     });
-    
+
     if (result.success) {
       toast.success(result.message);
       // Reset form on success
       setSignupData({
-        name: '',
-        email: '',
-        mobile: '',
-        address: '',
-        password: '',
-        confirmPassword: ''
+        name: "",
+        email: "",
+        mobile: "",
+        address: "",
+        password: "",
+        confirmPassword: "",
       });
     } else {
       toast.error(result.message);
@@ -101,7 +115,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 Manage Your Loans with Confidence
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                A comprehensive loan management system designed for members and administrators.
+                A comprehensive loan management system designed for members and
+                administrators.
               </p>
             </div>
 
@@ -113,7 +128,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <div>
                   <h3 className="font-semibold mb-2">Member Portal</h3>
                   <p className="text-gray-600">
-                    Apply for loans, track contributions, and manage your profile with ease.
+                    Apply for loans, track contributions, and manage your
+                    profile with ease.
                   </p>
                 </div>
               </div>
@@ -125,7 +141,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <div>
                   <h3 className="font-semibold mb-2">Admin Management</h3>
                   <p className="text-gray-600">
-                    Complete control over member accounts, loan approvals, and system settings.
+                    Complete control over member accounts, loan approvals, and
+                    system settings.
                   </p>
                 </div>
               </div>
@@ -137,7 +154,8 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <div>
                   <h3 className="font-semibold mb-2">Flexible Payments</h3>
                   <p className="text-gray-600">
-                    Bi-monthly payment schedule with transparent interest calculations.
+                    Bi-monthly payment schedule with transparent interest
+                    calculations.
                   </p>
                 </div>
               </div>
@@ -169,10 +187,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           type="email"
                           placeholder="Enter your email"
                           value={loginData.email}
-                          onChange={(e) => setLoginData(prev => ({
-                            ...prev,
-                            email: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setLoginData((prev) => ({
+                              ...prev,
+                              email: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>
@@ -184,10 +204,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           type="password"
                           placeholder="Enter your password"
                           value={loginData.password}
-                          onChange={(e) => setLoginData(prev => ({
-                            ...prev,
-                            password: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setLoginData((prev) => ({
+                              ...prev,
+                              password: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>
@@ -200,11 +222,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                               type="radio"
                               name="role"
                               value="member"
-                              checked={loginData.role === 'member'}
-                              onChange={(e) => setLoginData(prev => ({
-                                ...prev,
-                                role: e.target.value as 'member' | 'admin'
-                              }))}
+                              checked={loginData.role === "member"}
+                              onChange={(e) =>
+                                setLoginData((prev) => ({
+                                  ...prev,
+                                  role: e.target.value as "member" | "admin",
+                                }))
+                              }
                             />
                             <span>Member</span>
                           </label>
@@ -213,11 +237,13 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                               type="radio"
                               name="role"
                               value="admin"
-                              checked={loginData.role === 'admin'}
-                              onChange={(e) => setLoginData(prev => ({
-                                ...prev,
-                                role: e.target.value as 'member' | 'admin'
-                              }))}
+                              checked={loginData.role === "admin"}
+                              onChange={(e) =>
+                                setLoginData((prev) => ({
+                                  ...prev,
+                                  role: e.target.value as "member" | "admin",
+                                }))
+                              }
                             />
                             <span>Admin</span>
                           </label>
@@ -230,9 +256,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                     </form>
 
                     <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-600 mb-2">Demo Credentials:</p>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Demo Credentials:
+                      </p>
                       <p className="text-xs text-gray-500">
-                        <strong>Admin:</strong> admin@loan.com / password<br />
+                        <strong>Admin:</strong> admin@loan.com / password
+                        <br />
                         <strong>Member:</strong> john@email.com / password
                       </p>
                     </div>
@@ -244,9 +273,7 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                 <Card>
                   <CardHeader>
                     <CardTitle>Create Account</CardTitle>
-                    <CardDescription>
-                      Register as a new member
-                    </CardDescription>
+                    <CardDescription>Register as a new member</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSignup} className="space-y-4">
@@ -256,10 +283,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           id="signup-name"
                           placeholder="Enter your full name"
                           value={signupData.name}
-                          onChange={(e) => setSignupData(prev => ({
-                            ...prev,
-                            name: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setSignupData((prev) => ({
+                              ...prev,
+                              name: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>
@@ -271,10 +300,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           type="email"
                           placeholder="Enter your email"
                           value={signupData.email}
-                          onChange={(e) => setSignupData(prev => ({
-                            ...prev,
-                            email: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setSignupData((prev) => ({
+                              ...prev,
+                              email: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>
@@ -285,10 +316,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           id="signup-mobile"
                           placeholder="Enter your mobile number"
                           value={signupData.mobile}
-                          onChange={(e) => setSignupData(prev => ({
-                            ...prev,
-                            mobile: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setSignupData((prev) => ({
+                              ...prev,
+                              mobile: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>
@@ -299,10 +332,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           id="signup-address"
                           placeholder="Enter your address"
                           value={signupData.address}
-                          onChange={(e) => setSignupData(prev => ({
-                            ...prev,
-                            address: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setSignupData((prev) => ({
+                              ...prev,
+                              address: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>
@@ -314,10 +349,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           type="password"
                           placeholder="Create a password"
                           value={signupData.password}
-                          onChange={(e) => setSignupData(prev => ({
-                            ...prev,
-                            password: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setSignupData((prev) => ({
+                              ...prev,
+                              password: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>
@@ -329,10 +366,12 @@ export function LandingPage({ onLogin, onSignup }: LandingPageProps) {
                           type="password"
                           placeholder="Confirm your password"
                           value={signupData.confirmPassword}
-                          onChange={(e) => setSignupData(prev => ({
-                            ...prev,
-                            confirmPassword: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setSignupData((prev) => ({
+                              ...prev,
+                              confirmPassword: e.target.value,
+                            }))
+                          }
                           required
                         />
                       </div>

@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
-import { User, Contribution, AppState } from '../../App';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Badge } from '../ui/badge';
-import { Plus, DollarSign, TrendingUp, Calendar } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import React, { useState } from "react";
+import { User, Contribution, AppState } from "../../App";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { Badge } from "../ui/badge";
+import { Plus, DollarSign, TrendingUp, Calendar } from "lucide-react";
+import { toast } from "sonner";
 
 interface ContributionViewProps {
   member: User;
@@ -18,21 +44,33 @@ interface ContributionViewProps {
   updateState: (updates: Partial<AppState>) => void;
 }
 
-export function ContributionView({ member, contributions, state, updateState }: ContributionViewProps) {
+export function ContributionView({
+  member,
+  contributions,
+  state,
+  updateState,
+}: ContributionViewProps) {
   const [addContributionOpen, setAddContributionOpen] = useState(false);
   const [newContribution, setNewContribution] = useState({
-    amount: '',
-    type: 'monthly' as 'monthly' | 'additional',
-    description: ''
+    amount: "",
+    type: "monthly" as "monthly" | "additional",
+    description: "",
   });
 
-  const totalContributions = contributions.reduce((sum, cont) => sum + cont.amount, 0);
-  const monthlyContributions = contributions.filter(cont => cont.type === 'monthly');
-  const additionalContributions = contributions.filter(cont => cont.type === 'additional');
+  const totalContributions = contributions.reduce(
+    (sum, cont) => sum + cont.amount,
+    0
+  );
+  const monthlyContributions = contributions.filter(
+    (cont) => cont.type === "monthly"
+  );
+  const additionalContributions = contributions.filter(
+    (cont) => cont.type === "additional"
+  );
 
   const handleAddContribution = () => {
     if (!newContribution.amount || parseFloat(newContribution.amount) <= 0) {
-      toast.error('Please enter a valid amount');
+      toast.error("Please enter a valid amount");
       return;
     }
 
@@ -40,32 +78,33 @@ export function ContributionView({ member, contributions, state, updateState }: 
       id: `cont_${Date.now()}`,
       memberId: member.memberId!,
       amount: parseFloat(newContribution.amount),
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
       type: newContribution.type,
-      description: newContribution.description || `${newContribution.type} contribution`
+      description:
+        newContribution.description || `${newContribution.type} contribution`,
     };
 
     updateState({
-      contributions: [...state.contributions, contribution]
+      contributions: [...state.contributions, contribution],
     });
 
-    toast.success('Contribution added successfully');
+    toast.success("Contribution added successfully");
     setAddContributionOpen(false);
-    setNewContribution({ amount: '', type: 'monthly', description: '' });
+    setNewContribution({ amount: "", type: "monthly", description: "" });
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -75,9 +114,14 @@ export function ContributionView({ member, contributions, state, updateState }: 
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-semibold">Contributions</h2>
-          <p className="text-muted-foreground">Manage your savings and contributions</p>
+          <p className="text-muted-foreground">
+            Manage your savings and contributions
+          </p>
         </div>
-        <Dialog open={addContributionOpen} onOpenChange={setAddContributionOpen}>
+        <Dialog
+          open={addContributionOpen}
+          onOpenChange={setAddContributionOpen}
+        >
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
@@ -99,23 +143,32 @@ export function ContributionView({ member, contributions, state, updateState }: 
                   type="number"
                   placeholder="Enter amount"
                   value={newContribution.amount}
-                  onChange={(e) => setNewContribution(prev => ({ ...prev, amount: e.target.value }))}
+                  onChange={(e) =>
+                    setNewContribution((prev) => ({
+                      ...prev,
+                      amount: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="type">Type</Label>
                 <Select
                   value={newContribution.type}
-                  onValueChange={(value: 'monthly' | 'additional') => 
-                    setNewContribution(prev => ({ ...prev, type: value }))
+                  onValueChange={(value: "monthly" | "additional") =>
+                    setNewContribution((prev) => ({ ...prev, type: value }))
                   }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="monthly">Monthly Contribution</SelectItem>
-                    <SelectItem value="additional">Additional Savings</SelectItem>
+                    <SelectItem value="monthly">
+                      Monthly Contribution
+                    </SelectItem>
+                    <SelectItem value="additional">
+                      Additional Savings
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -125,11 +178,19 @@ export function ContributionView({ member, contributions, state, updateState }: 
                   id="description"
                   placeholder="Enter description"
                   value={newContribution.description}
-                  onChange={(e) => setNewContribution(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setNewContribution((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setAddContributionOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setAddContributionOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button onClick={handleAddContribution}>
@@ -145,11 +206,15 @@ export function ContributionView({ member, contributions, state, updateState }: 
       <div className="grid md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Contributions</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Contributions
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalContributions)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(totalContributions)}
+            </div>
             <p className="text-xs text-muted-foreground">
               From {contributions.length} contributions
             </p>
@@ -158,12 +223,16 @@ export function ContributionView({ member, contributions, state, updateState }: 
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Contributions</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Monthly Contributions
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(monthlyContributions.reduce((sum, cont) => sum + cont.amount, 0))}
+              {formatCurrency(
+                monthlyContributions.reduce((sum, cont) => sum + cont.amount, 0)
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               {monthlyContributions.length} monthly contributions
@@ -173,12 +242,19 @@ export function ContributionView({ member, contributions, state, updateState }: 
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Additional Savings</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Additional Savings
+            </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(additionalContributions.reduce((sum, cont) => sum + cont.amount, 0))}
+              {formatCurrency(
+                additionalContributions.reduce(
+                  (sum, cont) => sum + cont.amount,
+                  0
+                )
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               {additionalContributions.length} additional contributions
@@ -220,16 +296,29 @@ export function ContributionView({ member, contributions, state, updateState }: 
               </TableHeader>
               <TableBody>
                 {contributions
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                  .sort(
+                    (a, b) =>
+                      new Date(b.date).getTime() - new Date(a.date).getTime()
+                  )
                   .map((contribution) => (
                     <TableRow key={contribution.id}>
                       <TableCell>{formatDate(contribution.date)}</TableCell>
                       <TableCell>
-                        <Badge variant={contribution.type === 'monthly' ? 'default' : 'secondary'}>
-                          {contribution.type === 'monthly' ? 'Monthly' : 'Additional'}
+                        <Badge
+                          variant={
+                            contribution.type === "monthly"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {contribution.type === "monthly"
+                            ? "Monthly"
+                            : "Additional"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-medium">{contribution.description}</TableCell>
+                      <TableCell className="font-medium">
+                        {contribution.description}
+                      </TableCell>
                       <TableCell className="text-right font-medium">
                         {formatCurrency(contribution.amount)}
                       </TableCell>
