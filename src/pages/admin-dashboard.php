@@ -1,8 +1,21 @@
 <?php
+require_once __DIR__ . '/../includes/functions.php';
+ensureSession();
+
+// Auth guard: only allow if logged in and admin
+$currentUser = getCurrentUser();
+if (!$currentUser || ($currentUser['role'] ?? '') !== 'admin') {
+    setAlert('You must be an admin to access the dashboard', 'destructive');
+    redirect('/bbloan/src/login.php');
+}
+
 $notifications = getNotifications();
 $pendingNotifications = getPendingNotifications();
-$users = $_SESSION['app_data']['users'];
-$loans = $_SESSION['app_data']['loans'];
+$users = $_SESSION['app_data']['users'] ?? [];
+$loans = $_SESSION['app_data']['loans'] ?? [];
+
+$pageTitle = 'Admin Dashboard - Loan Management System';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="min-h-screen bg-background">
@@ -15,7 +28,7 @@ $loans = $_SESSION['app_data']['loans'];
                     <h1 class="text-xl font-semibold">LoanSystem Admin</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm text-muted-foreground">Welcome, <?= htmlspecialchars($currentUser['name']) ?></span>
+                    <span class="text-sm text-muted-foreground">Welcome, <?= htmlspecialchars($currentUser['name'] ?? 'Admin') ?></span>
                     <button onclick="logout()" class="bg-secondary text-secondary-foreground px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors">
                         Logout
                     </button>
@@ -95,20 +108,21 @@ $loans = $_SESSION['app_data']['loans'];
 
         <!-- Notifications Tab -->
         <div id="notificationsContent" class="tab-content hidden">
-            <?php include 'components/notification-center.php'; ?>
+            <?php include __DIR__ . '/../components/notification-center.php'; ?>
         </div>
 
         <!-- Members Tab -->
         <div id="membersContent" class="tab-content hidden">
-            <?php include 'components/member-management.php'; ?>
+            <?php include __DIR__ . '/../components/member-management.php'; ?>
         </div>
 
         <!-- Loans Tab -->
         <div id="loansContent" class="tab-content hidden">
-            <?php include 'components/loan-management.php'; ?>
+            <?php include __DIR__ . '/../components/loan-management.php'; ?>
         </div>
     </main>
 </div>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
 function showTab(tabName) {
@@ -133,7 +147,7 @@ function showTab(tabName) {
 }
 
 function logout() {
-    fetch('', {
+    fetch('/bbloan/src/logout.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -143,8 +157,16 @@ function logout() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            location.reload();
+            window.location.href = '/bbloan/src/login.php';
         }
     });
 }
+
+// Initialize lucide icons if available
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.lucide && window.lucide.createIcons) {
+    window.lucide.createIcons();
+  }
+});
 </script>
+<?php // End of page ?>

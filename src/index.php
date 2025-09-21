@@ -1,11 +1,9 @@
 <?php
 session_start();
 
-// Include database and functions
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 
-// Initialize sample data if not exists
 if (!isset($_SESSION['app_data'])) {
     $_SESSION['app_data'] = [
         'users' => [
@@ -97,36 +95,28 @@ if (!isset($_SESSION['app_data'])) {
     ];
 }
 
-// Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Content-Type: application/json');
-    
     switch ($_POST['action']) {
         case 'login':
             echo json_encode(handleLogin($_POST['email'], $_POST['password'], $_POST['role']));
             exit;
-            
         case 'signup':
             echo json_encode(handleSignup($_POST));
             exit;
-            
         case 'logout':
             echo json_encode(handleLogout());
             exit;
-            
         case 'approve_notification':
             echo json_encode(handleNotificationAction($_POST['notificationId'], 'approve'));
             exit;
-            
         case 'reject_notification':
             echo json_encode(handleNotificationAction($_POST['notificationId'], 'reject'));
             exit;
     }
 }
 
-// Check if user is logged in
 $currentUser = getCurrentUser();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -134,8 +124,7 @@ $currentUser = getCurrentUser();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LoanSystem - Loan Management System</title>
-    <link rel="stylesheet" href="styles/globals.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/index-DMPLzjAA.css">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body class="min-h-screen bg-background">
@@ -149,7 +138,6 @@ $currentUser = getCurrentUser();
         <?php endif; ?>
     </div>
 
-    <!-- Toast Container -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
     <script src="assets/js/main.js"></script>
